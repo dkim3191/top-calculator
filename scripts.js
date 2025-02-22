@@ -20,7 +20,16 @@ let num2 = "";
 let operator = "";
 
 function operate(num1, num2, operator) {
-    return operator(num1, num2);
+    switch (operator) {
+        case "plus":
+            return add(num1, num2);
+        case "minus":
+            return subtract(num1, num2);
+        case "times":
+            return multiply(num1, num2);
+        case "divide":
+            return divide(num1, num2);
+    }
 }
 
 function getOperator(btnID) {
@@ -33,11 +42,8 @@ function getOperator(btnID) {
             return "times";
         case "btn16":
             return "divide";
-        case "btn15":
-            return "equals";
     }
 }
-
 
 // Buttons
 const buttons = document.querySelector("#buttons");
@@ -50,7 +56,9 @@ for (let i = 1; i <= 16; i++) {
     const button = document.createElement("div");
     button.setAttribute("id", `btn${i}`);
     button.classList.add("button");
-    if (i % 4 == 0 || i == 15) {
+    if (i == 15) {
+        button.classList.add("equals");
+    } else if (i % 4 == 0) {
         button.classList.add("operator");
     } else if (i == 13) {
         button.classList.add("clear");
@@ -60,19 +68,19 @@ for (let i = 1; i <= 16; i++) {
     button.textContent = textArray[i - 1];
     button.addEventListener("click", (e) => {
         switch (e.target.classList[1]) {
-            case "operator":
-                num1 = display.textContent;
-                operator = getOperator(e.target.id);
-                newNum = true;
-                break;
             case "clear":
                 display.textContent = "0";
-                num1 = "";
+                num1 = "0";
                 num2 = "";
                 operator = "";
                 break;
+            case "operator":
+                num1 = +display.textContent;
+                operator = getOperator(e.target.id);
+                newNum = true;
+                break;
             case "number":
-                if (operator != "" && newNum) {
+                if (newNum || display.textContent == "0") {
                     display.textContent = "";
                     newNum = false;
                 }
@@ -80,6 +88,10 @@ for (let i = 1; i <= 16; i++) {
                     display.textContent += e.target.textContent;
                 }
                 break;
+            case "equals":
+                num2 = +display.textContent;
+                display.textContent = operate(num1, num2, operator);
+                newNum = true;
         }
 
 
