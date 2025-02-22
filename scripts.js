@@ -15,6 +15,14 @@ function divide(a, b) {
     return a / b;
 }
 
+function limitDigits(number) {
+    const numString = String(number);
+    if (numString.length > 11) {
+        return +numString.slice(0, 11);
+    }
+    return number;
+}
+
 let num1 = "0";
 let num2 = "";
 let operator = "";
@@ -22,13 +30,16 @@ let operator = "";
 function operate(num1, num2, operator) {
     switch (operator) {
         case "plus":
-            return add(num1, num2);
+            return limitDigits(add(num1, num2));
         case "minus":
-            return subtract(num1, num2);
+            return limitDigits(subtract(num1, num2));
         case "times":
-            return multiply(num1, num2);
+            return limitDigits(multiply(num1, num2));
         case "divide":
-            return divide(num1, num2);
+            if (num2 == 0) {
+                return "Bruh";
+            }
+            return limitDigits(divide(num1, num2));
     }
 }
 
@@ -75,6 +86,9 @@ for (let i = 1; i <= 16; i++) {
                 operator = "";
                 break;
             case "operator":
+                if (operator != "" && !newNum) {
+                    display.textContent = operate(num1, num2, operator);
+                }
                 num1 = +display.textContent;
                 operator = getOperator(e.target.id);
                 newNum = true;
@@ -86,10 +100,10 @@ for (let i = 1; i <= 16; i++) {
                 }
                 if (display.textContent.length < 10) {
                     display.textContent += e.target.textContent;
+                    num2 = +display.textContent;
                 }
                 break;
             case "equals":
-                num2 = +display.textContent;
                 display.textContent = operate(num1, num2, operator);
                 newNum = true;
         }
